@@ -1,0 +1,26 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Environment files
+.env
+.env.*
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Dependency directories
+coverage/
+dist/
