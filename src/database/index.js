@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 const MONGO_DB_NAME = "vidtube";
 
 const connectDB = async () => {
