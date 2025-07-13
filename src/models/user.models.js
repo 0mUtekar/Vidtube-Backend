@@ -9,6 +9,7 @@
 //   bio string
 //   refreshToke string 
 import mongoose, {Schema} from "mongoose";
+import bcypt from "bcrypt";
 
 const UserSchema = new Schema({
     username: {
@@ -44,5 +45,36 @@ const UserSchema = new Schema({
         timestamps: true
     }
 )
+// Pre-save hook to hash the password before saving the user
+UserSchema.pre("save", async function(next) {
+    if (!this.isModified("password")) return next();
+    try {
+        const salt = await bcypt.genSalt(10);
+        this.password = await bcypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
+})
+
+UserSchema.methods.generateAccessToken = function() {
+    // Generate an access token for the user
+    return jwt.sign({ 
+            _id: this._id,
+            username: this.username,
+            email: this.email,
+        },
+        process.env.ACCESS_JWT_SECRET, 
+        { expiresIn: process.env.ACCESS_JWT_EXPIRATION });
+
+}
+UserSchema.methods.generateRefreshToken = function() {
+    // Generate a refresh token for the user
+    return jwt.sign({ 
+            _id: this._id,
+        },
+        process.env.REFRESH_JWT_SECRET, 
+        { expiresIn: process.env.REFRESH_JWT_EXPIRATION });
+} 
 const User = mongoose.model("User", UserSchema);
 export default User;
