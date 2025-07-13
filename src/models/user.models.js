@@ -39,9 +39,10 @@ const UserSchema = new Schema({
     playlist: [{
         type: Schema.Types.ObjectId,
         ref: 'Playlist'
-    }], 
-},{
-    timestamps: true
-})
+    }]},
+    {
+        timestamps: true
+    }
+)
 const User = mongoose.model("User", UserSchema);
 export default User;
