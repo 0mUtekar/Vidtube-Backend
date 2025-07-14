@@ -16,7 +16,8 @@ app.use(express.static("public"))
 
 //import_routes
 import {router as statusRouter} from './routes/status.routes.js';
+import {router as userRouter} from './routes/user.routes.js';
 //routes
 app.use('/api/v1/test', statusRouter);
-
+app.use('/api/v1/user', userRouter);
 export {app}
