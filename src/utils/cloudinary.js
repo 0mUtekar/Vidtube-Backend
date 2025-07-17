@@ -14,7 +14,6 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'youtube-clone/profiles',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
   },
 });
 

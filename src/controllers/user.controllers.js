@@ -5,7 +5,10 @@ import { APIresponse } from "../utils/APIresponse.js";
 
 const userController = asyncHandler(async (req, res) => {
     const { username, email, password, bio } = req.body;
-
+    
+    if (!username || !email || !password) {
+        throw new APIerror(400, "Username, email, and password are required");
+    }
     const existingUser = await User.findOne({
         $or: [{ username }, { email }]
     });
@@ -13,7 +16,6 @@ const userController = asyncHandler(async (req, res) => {
     if (existingUser) {
         throw new APIerror(400, "User already exists with this username or email");
     }
-
     const profile_picture = req.files?.profile_picture?.[0]?.path;
     if (!profile_picture) {
         throw new APIerror(400, "Profile picture is required");
@@ -37,5 +39,54 @@ const userController = asyncHandler(async (req, res) => {
         new APIresponse(201, "User created successfully", createdUser)
     );
 });
+const generateTokens = async (userID) => {
+    try {
+        const user = await User.findById(userID);
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+        
+        user.refreshToken = refreshToken;
+        await user.save();
 
-export { userController };
+        return { accessToken, refreshToken };
+    } catch (error) {
+        throw new APIerror(500, "Internal server error while generating tokens");
+    }
+};
+const loginUser = asyncHandler(async (req, res) => {
+    const { email, password, username } = req.body;
+
+    if (!username || !password) {
+        throw new APIerror(400, "Either email or username is required");
+    }
+
+    const user = await User.findOne({$or: [{ email }, { username }]})
+
+    if (!user || !(await user.comparePassword(password))) {
+        throw new APIerror(401, "Invalid credentials");
+    }
+
+    const tokens = await generateTokens(user._id);
+    res.status(200)
+    .cookie("accessToken", tokens.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production"
+    })
+    .cookie("refreshToken", tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production"
+    })
+    .json(
+        new APIresponse(200, "Login successful"
+    ))
+});
+const loggedInUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id).select("-password -refreshToken");
+    if (!user) {
+        throw new APIerror(404, "User not found");
+    }
+    res.status(200).json(
+        new APIresponse(200, "User retrieved successfully", user)
+    );
+});
+export { userController, loginUser, generateTokens , loggedInUser };

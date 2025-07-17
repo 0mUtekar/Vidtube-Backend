@@ -56,7 +56,9 @@ UserSchema.pre("save", async function(next) {
         next(error);
     }
 })
-
+UserSchema.methods.comparePassword = async function(candidatePassword) {
+    return await bcypt.compare(candidatePassword, this.password);
+};
 UserSchema.methods.generateAccessToken = function() {
     // Generate an access token for the user
     return jwt.sign({ 
