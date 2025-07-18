@@ -16,9 +16,11 @@ const userController = asyncHandler(async (req, res) => {
     if (existingUser) {
         throw new APIerror(400, "User already exists with this username or email");
     }
-    const profile_picture = req.files?.profile_picture?.[0]?.path;
+
+    const profile_picture = req.body?.cloudinaryUploads?.profile_picture?.[0]?.secure_url;
+
     if (!profile_picture) {
-        throw new APIerror(400, "Profile picture is required");
+    return res.status(400).json({ message: "Profile picture is required", success: false });
     }
 
     const user = await User.create({
@@ -89,4 +91,22 @@ const loggedInUser = asyncHandler(async (req, res) => {
         new APIresponse(200, "User retrieved successfully", user)
     );
 });
-export { userController, loginUser, generateTokens , loggedInUser };
+const logoutUser = asyncHandler(async (req, res) => {
+    if (!req.user) {
+        throw new APIerror(401, "User not authenticated");
+    }
+    User.findByIdAndUpdate(req.user._id, 
+        { refreshToken: null }, 
+        { new: true })
+        .then(() => {
+            res.clearCookie("accessToken");
+            res.clearCookie("refreshToken");
+            res.status(200).json(
+                new APIresponse(200, "Logout successful")
+            );
+        })
+        .catch((error) => {
+            throw new APIerror(500, "Internal server error during logout", error);
+        });
+})
+export { userController, loginUser, generateTokens , loggedInUser , logoutUser };
