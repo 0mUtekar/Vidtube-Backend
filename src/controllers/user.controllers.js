@@ -44,8 +44,8 @@ const userController = asyncHandler(async (req, res) => {
 const generateTokens = async (userID) => {
     try {
         const user = await User.findById(userID);
-        const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
+        const accessToken = await user.generateAccessToken();
+        const refreshToken = await user.generateRefreshToken();
         
         user.refreshToken = refreshToken;
         await user.save();
@@ -58,7 +58,7 @@ const generateTokens = async (userID) => {
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password, username } = req.body;
 
-    if (!username || !password) {
+    if (!username && !email) {
         throw new APIerror(400, "Either email or username is required");
     }
 
@@ -109,4 +109,89 @@ const logoutUser = asyncHandler(async (req, res) => {
             throw new APIerror(500, "Internal server error during logout", error);
         });
 })
-export { userController, loginUser, generateTokens , loggedInUser , logoutUser };
+const updateUsername = asyncHandler(async (req, res) => {
+    const { username } = req.body;
+
+    if (!username) {
+        throw new APIerror(400, "Username is required");
+    }
+
+    const existingUser = await User.findOne(
+        { username, _id: { $ne: req.user._id } }
+    )
+    if (existingUser) {
+        throw new APIerror(400, "Username already exists");
+    }
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { username },
+        { new: true, select: "-password -refreshToken" }
+    );
+    if (!user) {
+        throw new APIerror(404, "User not found for username update");
+    }
+    res.status(200).json(
+        new APIresponse(200, "Username updated successfully", user)
+    )
+})
+const updatePassword = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+        throw new APIerror(400, "Current and new passwords are required");
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user || !(await user.comparePassword(currentPassword))) {
+        throw new APIerror(401, "Current password is incorrect");
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json(
+        new APIresponse(200, "Password updated successfully")
+    );
+})
+const updateProfile_picture = asyncHandler(async (req, res) => {
+    const new_profile_picture = req.body?.cloudinaryUploads?.profile_picture?.[0]?.secure_url;
+
+    if (!new_profile_picture) {
+        return res.status(400).json({ message: "Profile picture is required", success: false });
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { profile_picture_url: new_profile_picture },
+        { new: true, select: "-password -refreshToken" }
+    );
+    if (!user) {
+        throw new APIerror(404, "User not found for profile picture update");
+    }
+    res.status(200).json(
+        new APIresponse(200, "Profile picture updated successfully", user)
+    );
+})
+const updateBio = asyncHandler(async (req, res) => {
+    const { bio } = req.body;
+
+    if (!bio) {
+        throw new APIerror(400, "Bio is required");
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { bio },
+        { new: true, select: "-password -refreshToken" }
+    );
+
+    if (!user) {
+        throw new APIerror(404, "User not found");
+    }
+
+    res.status(200).json(
+        new APIresponse(200, "Bio updated successfully", user)
+    );
+})
+export { userController, loginUser, generateTokens , loggedInUser , logoutUser , updateUsername, updatePassword, updateProfile_picture, updateBio };

@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-
+import cookieParser from 'cookie-parser';
 const app = express();
 
-//middleware
+//common middleware
 app.use(
     cors({ 
         origin: process.env.CORS_ORIGIN, // sets the allowed origin for CORS requests
@@ -13,7 +13,7 @@ app.use(
 app.use(express.json({limit : "16kb"}))
 app.use(express.urlencoded({extended : true , limit : "16kb"}))
 app.use(express.static("public"))
-
+app.use(cookieParser()); // parses cookies attached to the client request object
 //import_routes
 import {router as statusRouter} from './routes/status.routes.js';
 import {router as userRouter} from './routes/user.routes.js';
