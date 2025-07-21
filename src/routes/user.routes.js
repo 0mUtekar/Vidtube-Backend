@@ -1,4 +1,4 @@
-import { userController, loginUser , logoutUser , updateUsername, updatePassword, updateProfile_picture, updateBio} from "../controllers/user.controllers.js";
+import { userController, loginUser , logoutUser , updateUsername, updatePassword, updateProfile_picture, updateBio } from "../controllers/user.controllers.js";
 import { Router } from "express";
 import { uploadOnCloudinary } from "../middleware/uploadimage.js";
 import { verifyJWT } from "../middleware/verifyJWT.js";

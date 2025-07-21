@@ -17,7 +17,9 @@ app.use(cookieParser()); // parses cookies attached to the client request object
 //import_routes
 import {router as statusRouter} from './routes/status.routes.js';
 import {router as userRouter} from './routes/user.routes.js';
+import {router as channelRouter} from './routes/channels.routes.js';
 //routes
 app.use('/api/v1/test', statusRouter);
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/channel', channelRouter);
 export {app}

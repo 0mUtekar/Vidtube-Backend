@@ -20,13 +20,15 @@ const ChannelSchema = new Schema({
     },
     description : {
         type: String,
+        default: "Welcome to my channel!"
     },  
     banner_url : {
         type: String,
+        default: "https://res.cloudinary.com/dhcz9eecl/image/upload/v1753128780/default_banner_o49iu4.jpg"
     }},
     {
         timestamps: true   
     }
 )
 const Channel = mongoose.model("Channel", ChannelSchema);
-export default Channel;
+export {Channel};

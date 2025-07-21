@@ -14,19 +14,23 @@ const uploadOnCloudinary = (req, res, next) => {
   const busboy = Busboy({ headers: req.headers });
   const uploads = {};
   const cloudinaryPromises = [];
-  req.body = {}; // Make sure this exists
+  req.body = {};
 
-  // Collect fields
+  let fileReceived = false;
+
+  // Collect form fields (e.g., text inputs)
   busboy.on('field', (fieldname, value) => {
     req.body[fieldname] = value;
   });
 
-  // Handle file upload
+  // Handle file uploads (if any)
   busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+    fileReceived = true;
+
     const uploadPromise = new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: 'youtube-clone/profiles',
+          folder: `youtube-clone/${fieldname === "banner" ? "banners" : "profiles"}`,
           resource_type: 'image',
         },
         (error, result) => {
@@ -38,15 +42,19 @@ const uploadOnCloudinary = (req, res, next) => {
       );
       file.pipe(stream);
     });
-    console.log("Received file:", fieldname, filename);
+
     cloudinaryPromises.push(uploadPromise);
   });
 
+  // After parsing all parts of the form
   busboy.on('finish', async () => {
     try {
-      await Promise.all(cloudinaryPromises);
-      req.body.cloudinaryUploads = uploads;
-      console.log("Final uploads object:", uploads);
+      if (fileReceived) {
+        await Promise.all(cloudinaryPromises);
+        req.body.cloudinaryUploads = uploads;
+      } else {
+        req.body.cloudinaryUploads = {}; // No files received
+      }
       next();
     } catch (err) {
       next(err);
@@ -57,3 +65,4 @@ const uploadOnCloudinary = (req, res, next) => {
 };
 
 export { cloudinary, uploadOnCloudinary };
+

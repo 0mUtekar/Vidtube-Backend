@@ -17,11 +17,7 @@ const userController = asyncHandler(async (req, res) => {
         throw new APIerror(400, "User already exists with this username or email");
     }
 
-    const profile_picture = req.body?.cloudinaryUploads?.profile_picture?.[0]?.secure_url;
-
-    if (!profile_picture) {
-    return res.status(400).json({ message: "Profile picture is required", success: false });
-    }
+    const profile_picture = req.body?.cloudinaryUploads?.profile_picture?.[0]?.secure_url || undefined;
 
     const user = await User.create({
         username,
