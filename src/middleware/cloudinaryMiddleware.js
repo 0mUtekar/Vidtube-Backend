@@ -10,28 +10,39 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadOnCloudinary = (req, res, next) => {
+const uploadMediaToCloudinary = (req, res, next) => {
   const busboy = Busboy({ headers: req.headers });
   const uploads = {};
   const cloudinaryPromises = [];
   req.body = {};
 
-  let fileReceived = false;
-
-  // Collect form fields (e.g., text inputs)
   busboy.on('field', (fieldname, value) => {
     req.body[fieldname] = value;
   });
 
-  // Handle file uploads (if any)
   busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-    fileReceived = true;
+    let folder = 'youtube-clone/others';
+    let resource_type = 'auto';
+
+    if (fieldname === 'thumbnail') {
+      folder = 'youtube-clone/thumbnails';
+      resource_type = 'image';
+    } else if (fieldname === 'banner') {
+      folder = 'youtube-clone/banners';
+      resource_type = 'image';
+    } else if (fieldname === 'profile_picture') {
+      folder = 'youtube-clone/profiles';
+      resource_type = 'image';
+    } else if (fieldname === 'video') {
+      folder = 'youtube-clone/videos';
+      resource_type = 'video';
+    }
 
     const uploadPromise = new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: `youtube-clone/${fieldname === "banner" ? "banners" : "profiles"}`,
-          resource_type: 'image',
+          folder,
+          resource_type,
         },
         (error, result) => {
           if (error) return reject(error);
@@ -46,15 +57,10 @@ const uploadOnCloudinary = (req, res, next) => {
     cloudinaryPromises.push(uploadPromise);
   });
 
-  // After parsing all parts of the form
   busboy.on('finish', async () => {
     try {
-      if (fileReceived) {
-        await Promise.all(cloudinaryPromises);
-        req.body.cloudinaryUploads = uploads;
-      } else {
-        req.body.cloudinaryUploads = {}; // No files received
-      }
+      await Promise.all(cloudinaryPromises);
+      req.body.cloudinaryUploads = uploads;
       next();
     } catch (err) {
       next(err);
@@ -64,5 +70,4 @@ const uploadOnCloudinary = (req, res, next) => {
   req.pipe(busboy);
 };
 
-export { cloudinary, uploadOnCloudinary };
-
+export { cloudinary, uploadMediaToCloudinary };

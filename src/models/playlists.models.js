@@ -6,7 +6,7 @@
 //   is_public boolean
 import mongoose, {Schema} from "mongoose";
 const PlaylistSchema = new Schema({
-    user_id: {
+    owner: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -14,7 +14,6 @@ const PlaylistSchema = new Schema({
     name: {
         type: String,
         required: true,
-        unique: true
     },
     description: {
         type: String,
@@ -22,10 +21,14 @@ const PlaylistSchema = new Schema({
     is_public: {
         type: Boolean,
         default: true // true for public, false for private
-    }},
+    },
+    videos: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Video'
+    }]},
     {
         timestamps: true
     }
 )
 const Playlist = mongoose.model("Playlist", PlaylistSchema);
-export default Playlist;
+export { Playlist };

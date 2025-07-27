@@ -31,6 +31,7 @@ const UserSchema = new Schema({
     },
     profile_picture_url: {
         type: String,
+        default: "https://res.cloudinary.com/dhcz9eecl/image/upload/v1753129465/Screenshot_2025-07-22_015340_q4gdnf.png"
     },
     bio: {
         type: String,

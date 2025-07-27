@@ -19,4 +19,4 @@ const LikeSchema = new Schema({
     }
 )
 const Like = mongoose.model("Like", LikeSchema);
-export default Like;
+export { Like };

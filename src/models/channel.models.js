@@ -25,10 +25,19 @@ const ChannelSchema = new Schema({
     banner_url : {
         type: String,
         default: "https://res.cloudinary.com/dhcz9eecl/image/upload/v1753128780/default_banner_o49iu4.jpg"
+    },
+    subsribers: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        default: [],
+    }],
+    subsribers_count: {
+        type: Number,
+        default: 0
     }},
     {
         timestamps: true   
     }
 )
 const Channel = mongoose.model("Channel", ChannelSchema);
-export {Channel};
+export { Channel };

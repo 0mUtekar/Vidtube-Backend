@@ -17,9 +17,13 @@ const VideoSchema = new Schema({
     title : {
         type: String,
         required: true,
+        maxlength: [100, "Title cannot exceed 100 characters"],
+        trim: true,
     },
     description : {
         type: String,
+        default: "",
+        maxlength: 500,
     },
     video_url : {
         type: String,
@@ -41,4 +45,4 @@ const VideoSchema = new Schema({
     }
 )
 const Video = mongoose.model("Video", VideoSchema);
-export default Video;
+export { Video };
