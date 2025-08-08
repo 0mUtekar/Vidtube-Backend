@@ -6,7 +6,7 @@ const router = Router();
 
 router.route('/:video_id/postComment').post(verifyJWT, postComment);
 router.route('/:video_id/getComments').get(getComments);
-router.route('/:video_id/deleteComment').delete(verifyJWT, deleteComment);
+router.route('/:comment_id/deleteComment').delete(verifyJWT, deleteComment);
 router.route('/:video_id/commentsCount').get(getCommentsCount);
 
 export { router };

@@ -1,10 +1,14 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { APIerror } from "../utils/APIerror";
-import { APIresponse } from "../utils/APIresponse";
-import { Video } from "../models/video.model.js";
+import { APIerror } from "../utils/APIerror.js";
+import { APIresponse } from "../utils/APIresponse.js";
+import { Video } from "../models/video.models.js";
 
 const postVideo = asyncHandler(async (req, res) => {
     const { channel_id, title, description, is_public } = req.body;
+    const owner = req.user._id;
+    if (!owner) {
+        throw new APIerror(403, "You must be logged in to upload a video");
+    }
     if (!channel_id || !title ) {
         throw new APIerror(400, "Channel ID and title are required");
     }
@@ -29,8 +33,8 @@ const postVideo = asyncHandler(async (req, res) => {
     res.status(201).json(new APIresponse(video, "Video uploaded successfully"));
 })
 
-const getVideo = asyncHandler(async (req, res) => {
-    const { video_id } = req.params.video_id;
+const getVideo = asyncHandler(async (req, res, next) => {
+    const video_id = req.params.video_id;
     if (!video_id) {
         throw new APIerror(400, "Video ID is required");
     }
@@ -42,9 +46,13 @@ const getVideo = asyncHandler(async (req, res) => {
 })
 
 const deleteVideo = asyncHandler(async (req, res) => {
-    const { video_id } = req.params.video_id;
+    const video_id = req.params.video_id;
+    const owner = req.user._id;
     if (!video_id) {
         throw new APIerror(400, "Video ID is required");
+    }
+    if (!owner) {
+        throw new APIerror(403, "You must be logged in to delete a video or you are not the owner of this video");
     }
     const video = await Video.findByIdAndDelete(video_id);
     if (!video) {
@@ -54,7 +62,11 @@ const deleteVideo = asyncHandler(async (req, res) => {
 })
 
 const updateThumbnail = asyncHandler(async (req, res) => {
-    const { video_id } = req.params.video_id;
+    const video_id = req.params.video_id;
+    const owner = req.user._id;
+    if (!owner) {
+        throw new APIerror(403, "You must be logged in to update a video thumbnail or you are not the owner of this video");
+    }
     if (!video_id) {
         throw new APIerror(400, "Video ID is required");
     }
@@ -69,7 +81,7 @@ const updateThumbnail = asyncHandler(async (req, res) => {
     res.status(200).json(new APIresponse(video, "Thumbnail updated successfully"));
 })
 const veiwVideo = asyncHandler(async (req, res) => {
-    const { video_id } = req.params.video_id;
+    const video_id = req.params.video_id;
     if (!video_id) {
         throw new APIerror(400, "Video ID is required");
     }
@@ -85,7 +97,11 @@ const veiwVideo = asyncHandler(async (req, res) => {
     res.status(200).json(new APIresponse(video, "Video viewed successfully"));
 })
 const changeVisibility = asyncHandler(async (req, res) => {
-    const { video_id } = req.params.video_id;
+    const video_id = req.params.video_id;
+    const owner = req.user._id;
+    if (!owner) {
+        throw new APIerror(403, "You must be logged in to change video visibility or you are not the owner of this video");
+    }
     if (!video_id) {
         throw new APIerror(400, "Video ID is required");
     }

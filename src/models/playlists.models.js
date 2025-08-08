@@ -1,9 +1,3 @@
-//   id string pk
-//   user_id string
-//   name string
-//   description string
-//   created_at timestamp
-//   is_public boolean
 import mongoose, {Schema} from "mongoose";
 const PlaylistSchema = new Schema({
     owner: {

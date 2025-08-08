@@ -1,10 +1,3 @@
-//   id string pk
-//   owner string
-//   name string
-//   description string
-//   created_at timestamp
-//   updated_at timestamp
-//   banner_url string
 import mongoose, {Schema} from "mongoose";
 
 const ChannelSchema = new Schema({

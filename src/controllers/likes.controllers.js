@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { APIerror } from "../utils/APIerror";
-import { APIresponse } from "../utils/APIresponse";
-import { Like } from "../models/like.model.js";
+import { APIerror } from "../utils/APIerror.js";
+import { APIresponse } from "../utils/APIresponse.js";
+import { Like } from "../models/likes.models.js";
 
 const likeVideo = asyncHandler(async (req, res) => {
     const { video_id } = req.params.video_id;

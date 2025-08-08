@@ -9,7 +9,7 @@ router.route('/').post(verifyJWT, uploadMediaToCloudinary, postVideo);
 router.route('/:video_id').get(getVideo);
 router.route('/:video_id').delete(verifyJWT, deleteVideo);
 router.route('/:video_id/thumbnail').patch(verifyJWT, uploadMediaToCloudinary, updateThumbnail);
-router.route('/:video_id/visibility').patch(changeVisibility);
-router.route('/:video_id/view').post(veiwVideo);
+router.route('/:video_id/visibility').patch(verifyJWT, changeVisibility);
+router.route('/:video_id/view').put(veiwVideo);
 
 export { router };

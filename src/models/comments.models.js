@@ -1,8 +1,3 @@
-//   id string pk
-//   video_id string
-//   user_id string
-//   content string
-//   created_at timestamp
 import mongoose, {Schema} from "mongoose";
 
 const CommentsSchema = new Schema({

@@ -5,6 +5,10 @@ import { Comment } from "../models/comments.models.js";
 
 const postComment = asyncHandler(async (req, res) => {
     const video_id = req.params.video_id;
+    const user_id = req.user._id;
+    if (!video_id || !user_id) {
+        throw new APIerror("Video ID and User ID are required", 400);
+    }
     const { content } = req.body;
     if (!content || content.trim() === "") {
         throw new APIerror("Comment content cannot be empty", 400);

@@ -1,12 +1,3 @@
-//   id string pk
-//   channel_id string
-//   title string
-//   description string
-//   video_url string
-//   thumbnail_url string
-//   is_public string
-//   views int
-//   upload_date timestamp
 import mongoose, {Schema} from "mongoose";
 
 const VideoSchema = new Schema({

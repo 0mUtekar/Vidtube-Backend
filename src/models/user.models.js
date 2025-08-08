@@ -1,13 +1,3 @@
-//   id string pk
-//   username string
-//   email string
-//   password string
-//   created_at timestamp
-//   updated_at timestamp
-//   playlist array of ObjectId references to Playlist
-//   profile_picture_url string
-//   bio string
-//   refreshToke string 
 import mongoose, {Schema} from "mongoose";
 import bcypt from "bcrypt";
 import jwt from "jsonwebtoken";

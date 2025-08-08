@@ -1,7 +1,3 @@
-//   id string pk
-//   user_id string
-//   video_id string
-//   created_at timestamp
 import mongoose, {Schema} from "mongoose";
 const LikeSchema = new Schema({
     user_id: {
