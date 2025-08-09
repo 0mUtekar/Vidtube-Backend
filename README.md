@@ -285,6 +285,8 @@ The server will start at `http://localhost:8000`
 | `MONGO_URI` | MongoDB connection string | - |
 | `ACCESS_JWT_SECRET` | JWT access token secret | - |
 | `REFRESH_JWT_SECRET` | JWT refresh token secret | - |
+| `ACCESS_JWT_EXPIRATION` | Access token expiry | 15m |
+| `REFRESH_JWT_EXPIRATION` | Refresh token expiry | 7d |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | - |
 | `CLOUDINARY_API_KEY` | Cloudinary API key | - |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret | - |
