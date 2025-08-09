@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 const LikeSchema = new Schema({
-    user_id: {
+    owner: {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true

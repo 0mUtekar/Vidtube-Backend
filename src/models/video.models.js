@@ -1,6 +1,11 @@
 import mongoose, {Schema} from "mongoose";
 
 const VideoSchema = new Schema({
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     channel_id :{
         type: Schema.Types.ObjectId,
         ref: 'Channel',

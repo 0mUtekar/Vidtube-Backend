@@ -1,4 +1,4 @@
-import { userController, loginUser , logoutUser , updateUsername, updatePassword, updateProfile_picture, updateBio } from "../controllers/user.controllers.js";
+import { userController, loginUser , logoutUser , updateUsername, updatePassword, updateProfile_picture, updateBio, loggedInUser } from "../controllers/user.controllers.js";
 import { Router } from "express";
 import { uploadMediaToCloudinary } from "../middleware/cloudinaryMiddleware.js";
 import { verifyJWT } from "../middleware/verifyJWT.js";
@@ -12,5 +12,6 @@ router.route('/update-username').put(verifyJWT, updateUsername);
 router.route('/update-password').put(verifyJWT, updatePassword);
 router.route('/update-profile-picture').put(verifyJWT, uploadMediaToCloudinary, updateProfile_picture);
 router.route('/update-bio').put(verifyJWT, updateBio);
+router.route('/me').get(verifyJWT, loggedInUser);
 
 export { router };

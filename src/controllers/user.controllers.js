@@ -91,7 +91,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     if (!req.user) {
         throw new APIerror(401, "User not authenticated");
     }
-    User.findByIdAndUpdate(req.user._id, 
+    await User.findByIdAndUpdate(req.user._id, 
         { refreshToken: null }, 
         { new: true })
         .then(() => {
